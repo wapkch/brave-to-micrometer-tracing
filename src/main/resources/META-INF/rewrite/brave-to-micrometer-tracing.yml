@@ -1,0 +1,20 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.zhongan.openrewrite.BraveToMicrometerTracing
+displayName: Replace Brave Tracer with Micrometer Tracer
+description: Replace import and method usage of brave.Tracer with io.micrometer.tracing.Tracer.
+
+recipeList:
+  - com.zhongan.rewrite.BraveToMicrometerTracingRecipe
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: brave.Span
+      newFullyQualifiedTypeName: io.micrometer.tracing.Span
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: brave.Tracer
+      newFullyQualifiedTypeName: io.micrometer.tracing.Tracer
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: brave.Tracer.SpanInScope
+      newFullyQualifiedTypeName: io.micrometer.tracing.Tracer.SpanInScope
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: brave.propagation.TraceContext
+      newFullyQualifiedTypeName: io.micrometer.tracing.TraceContext
