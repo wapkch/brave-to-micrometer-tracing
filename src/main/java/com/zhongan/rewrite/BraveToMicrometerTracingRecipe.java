@@ -84,21 +84,6 @@ public class BraveToMicrometerTracingRecipe extends Recipe {
                         .apply(getCursor(), m.getCoordinates().replace());
                     return m;
                 }
-                if (extraFieldPropagationGetMethod.matches(m)) {
-                    maybeRemoveImport("brave.propagation.ExtraFieldPropagation");
-                    maybeAddImport("com.zatech.octopus.component.sleuth.TraceOp");
-                    Expression baggageKey = arguments.get(1);
-                    m = JavaTemplate.builder("TraceOp.getExtItem(#{any()})").build()
-                        .apply(getCursor(), m.getCoordinates().replace(), baggageKey);
-                    return m;
-                }
-                if (extraFieldPropagationGetAllMethod.matches(m)) {
-                    maybeRemoveImport("brave.propagation.ExtraFieldPropagation");
-                    maybeAddImport("com.zatech.octopus.component.sleuth.TraceOp");
-                    m = JavaTemplate.builder("TraceOp.getExtItems()").build()
-                        .apply(getCursor(), m.getCoordinates().replace());
-                    return m;
-                }
 
                 return m;
             }

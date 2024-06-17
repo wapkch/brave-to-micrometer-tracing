@@ -29,7 +29,6 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
                         import brave.Span;
                         import brave.Tracer;
                         import brave.propagation.TraceContext;
-                        import com.zatech.octopus.component.sleuth.TraceOp;
                         import java.util.Map;
                         import java.util.function.Supplier;
                         import org.springframework.util.Assert;
@@ -38,7 +37,7 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
 
                             final static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RenewTraceHandler.class);
 
-                            private brave.Tracer tracer;
+                            private Tracer tracer;
 
                             public <T> void processWithNewTrace(Supplier<T> supplier) {
 
@@ -46,11 +45,9 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
 
                                 Span span = tracer.newTrace();
                                 String executeTraceId = null;
-                                Map<String, String> extItems = TraceOp.getExtItems();
                                 try (brave.Tracer.SpanInScope scope = tracer.withSpanInScope(span)) {
                                     TraceContext context = tracer.currentSpan().context();
                                     executeTraceId = context.traceIdString();
-                                    extItems.forEach(TraceOp::setExtItem);
                                     supplier.get();
                                 } catch (Exception e) {
                                     log.warn("Fail to process batch ,executeTraceId:{}", executeTraceId, e);
@@ -61,9 +58,9 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
                         }
                     """,
                 """
-                    import com.zatech.octopus.component.sleuth.TraceOp;
                     import io.micrometer.tracing.Span;
                     import io.micrometer.tracing.TraceContext;
+                    import io.micrometer.tracing.Tracer;
 
                     import java.util.Map;
                     import java.util.function.Supplier;
@@ -73,7 +70,7 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
                     
                         final static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RenewTraceHandler.class);
                     
-                        private io.micrometer.tracing.Tracer tracer;
+                        private Tracer tracer;
                     
                         public <T> void processWithNewTrace(Supplier<T> supplier) {
                     
@@ -81,11 +78,9 @@ class BraveToMicrometerRecipeTest implements RewriteTest {
                     
                             Span span = tracer.nextSpan();
                             String executeTraceId = null;
-                            Map<String, String> extItems = TraceOp.getExtItems();
                             try (io.micrometer.tracing.Tracer.SpanInScope scope = tracer.withSpan(span)) {
                                 TraceContext context = tracer.currentSpan().context();
                                 executeTraceId = tracer.currentSpan().context().traceId();
-                                extItems.forEach(TraceOp::setExtItem);
                                 supplier.get();
                             } catch (Exception e) {
                                 log.warn("Fail to process batch ,executeTraceId:{}", executeTraceId, e);
